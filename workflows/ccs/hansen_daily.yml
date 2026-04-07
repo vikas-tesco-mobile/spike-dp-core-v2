@@ -1,7 +1,7 @@
 resources:
   jobs:
     hansen_daily:
-      name: "hansen_daily"
+      name: "v2_hansen_daily"
       environments:
         - environment_key: default
           spec:

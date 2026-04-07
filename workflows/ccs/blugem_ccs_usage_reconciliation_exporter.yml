@@ -1,7 +1,7 @@
 resources:
   jobs:
     blugem_ccs_usage_reconciliation_exporter_csv:
-      name: blugem_ccs_usage_reconciliation_exporter
+      name: v2_blugem_ccs_usage_reconciliation_exporter
       environments:
         - environment_key: default
           spec:

@@ -2,7 +2,7 @@
 resources:
   jobs:
     tesco_products_api_daily:
-      name: tesco_products_api_daily
+      name: v2_tesco_products_api_daily
       environments:
         - environment_key: default
           spec:

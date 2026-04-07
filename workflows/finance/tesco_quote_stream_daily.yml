@@ -1,7 +1,7 @@
 resources:
   jobs:
     tesco_quote_stream_daily:
-      name: "tesco_quote_stream_daily"
+      name: "v2_tesco_quote_stream_daily"
       environments:
         - environment_key: default
           spec:

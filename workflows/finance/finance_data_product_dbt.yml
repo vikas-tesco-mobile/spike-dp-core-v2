@@ -10,7 +10,7 @@
 resources:
   jobs:
     tesco_sales_transactions:
-      name: tesco_sales_transactions
+      name: v2_tesco_sales_transactions
       environments:
         - environment_key: default
           spec:

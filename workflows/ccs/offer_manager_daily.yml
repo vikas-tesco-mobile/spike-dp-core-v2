@@ -1,7 +1,7 @@
 resources:
   jobs:
     offer_manager_daily:
-      name: "offer_manager_daily"
+      name: "v2_offer_manager_daily"
       environments:
         - environment_key: default
           spec:

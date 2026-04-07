@@ -2,7 +2,7 @@
 resources:
   jobs:
     tap_sales_daily:
-      name: tesco_tap_store_online_sales
+      name: v2_tesco_tap_store_online_sales
       environments:
         - environment_key: default
           spec:

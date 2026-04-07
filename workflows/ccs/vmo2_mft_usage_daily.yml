@@ -1,7 +1,7 @@
 resources:
   jobs:
     vmo2_mft_usage_daily:
-      name: "vmo2_mft_usage_daily"
+      name: "v2_vmo2_mft_usage_daily"
       environments:
         - environment_key: default
           spec:

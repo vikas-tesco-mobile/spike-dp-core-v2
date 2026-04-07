@@ -6,7 +6,7 @@
 resources:
   jobs:
     revenue_assurance_dbt:
-      name: revenue_assurance_dbt
+      name: v2_revenue_assurance_dbt
       environments:
         - environment_key: default
           spec:

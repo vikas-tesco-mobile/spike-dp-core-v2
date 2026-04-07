@@ -1,7 +1,7 @@
 resources:
   jobs:
     table_metadata_updater:
-      name: table_metadata_updater
+      name: v2_table_metadata_updater
       environments:
         - environment_key: default
           spec:

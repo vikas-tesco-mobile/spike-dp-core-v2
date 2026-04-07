@@ -1,7 +1,7 @@
 resources:
   jobs:
     sale_transactions_exporter:
-      name: sale_transactions_exporter
+      name: v2_sale_transactions_exporter
       environments:
         - environment_key: default
           spec:
