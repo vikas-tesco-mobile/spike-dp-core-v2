@@ -1,0 +1,39 @@
+resources:
+  jobs:
+    table_metadata_updater:
+      name: table_metadata_updater
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: 4
+            dependencies:
+              - ../../dist/*.whl
+      tasks:
+        - task_key: apply_description_and_tags_for_silver_tables
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/housekeeping/table_metadata_updater.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--workspace_root",
+              "${workspace.file_path}",
+              "--job_name",
+              "table_metadata_updater",
+              "--layer",
+              "silver"
+            ]
+        - task_key: apply_description_and_tags_for_gold_tables
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/housekeeping/table_metadata_updater.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--workspace_root",
+              "${workspace.file_path}",
+              "--job_name",
+              "table_metadata_updater",
+              "--layer",
+              "gold"
+            ]

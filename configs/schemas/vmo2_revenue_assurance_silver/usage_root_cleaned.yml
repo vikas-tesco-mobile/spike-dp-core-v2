@@ -1,0 +1,281 @@
+version: 1.0
+table:
+  name: "usage_root_cleaned"
+  description: "Flattened view of usage event root scalar and struct fields"
+  tags:
+    owner__tech: "Revenue Assurance Team"
+    data__supplier: "MATRIX"
+    data__domain: "TBD"
+    pii__exists: "false"
+    pii__classification: "TBD"
+
+  primary_keys:
+    - "event_id"
+    - "event_type"
+  deduplication_keys:
+    - "event_datetime_utc"
+
+  flatten_config:
+    cols_to_exclude:
+      - "_metadata"
+
+  columns:
+    - name: "event_type"
+      source_col_name: "mtx_container_name"
+      type: "string"
+      description: "Type of an Event Data Record (EDR)"
+
+    - name: "event_id"
+      source_col_name: "eventId"
+      type: "string"
+      description: "Key event identifier used for deduplication"
+
+    - name: "event_datetime_utc"
+      source_col_name: "eventTime"
+      type: "timestamp"
+      description: "Event time (UTC)"
+
+    - name: "tenant_id"
+      source_col_name: "tenantId"
+      type: "string"
+      description: "Tenant identifier"
+
+    - name: "unique_sequence_id"
+      source_col_name: "uniqueSequenceId"
+      type: "bigint"
+      description: "Unique sequence identifier for the event"
+
+    - name: "session_id"
+      source_col_name: "sessionId"
+      type: "string"
+      description: "Session identifier"
+
+    - name: "aggregation_id"
+      source_col_name: "aggregationId"
+      type: "string"
+      description: "Aggregation identifier"
+
+    - name: "stream_cursor"
+      source_col_name: "streamCursor"
+      type: "string"
+      description: "Stream cursor value"
+
+    - name: "msisdn"
+      source_col_name: "primaryEventAttr__msisdn"
+      type: "string"
+      description: "Subscriber MSISDN from primaryEventAttr"
+
+    - name: "segment"
+      source_col_name: "primaryEventAttr__segment"
+      type: "string"
+      description: "Subscriber segment from primaryEventAttr"
+
+    - name: "status_value"
+      source_col_name: "primaryEventAttr__statusValue"
+      type: "bigint"
+      description: "Status value from primaryEventAttr"
+
+    - name: "service_classification"
+      source_col_name: "serviceClassification"
+      type: "string"
+      description: "Service classification"
+
+    - name: "service_context"
+      source_col_name: "serviceContext"
+      type: "string"
+      description: "Service context"
+
+    - name: "service_id"
+      source_col_name: "serviceId"
+      type: "bigint"
+      description: "Service identifier"
+
+    - name: "composite_usage_type"
+      source_col_name: "compositeUsageType"
+      type: "string"
+      description: "Composite usage type"
+
+    - name: "rating_group"
+      source_col_name: "ratingGroup"
+      type: "bigint"
+      description: "Rating group"
+
+    - name: "role_of_node"
+      source_col_name: "roleOfNode"
+      type: "bigint"
+      description: "Role of node"
+
+    - name: "role_of_node_name"
+      source_col_name: "roleOfNodeName"
+      type: "string"
+      description: "Role of node name"
+
+    - name: "duration"
+      source_col_name: "duration"
+      type: "bigint"
+      description: "Event duration"
+
+    - name: "delete_code"
+      source_col_name: "deleteCode"
+      type: "bigint"
+      description: "Delete code"
+
+    - name: "flags"
+      source_col_name: "flags"
+      type: "bigint"
+      description: "Event-level flags"
+
+    - name: "initiator_id"
+      source_col_name: "initiatorId"
+      type: "string"
+      description: "Initiator identifier"
+
+    - name: "initiator_external_id"
+      source_col_name: "initiatorExternalId"
+      type: "string"
+      description: "Initiator external identifier"
+
+    - name: "initiator_device_id"
+      source_col_name: "initiatorDeviceId"
+      type: "string"
+      description: "Initiator device identifier"
+
+    - name: "initiator_device_external_id"
+      source_col_name: "initiatorDeviceExternalId"
+      type: "string"
+      description: "Initiator device external identifier"
+
+    - name: "initiator_type"
+      source_col_name: "initiatorType"
+      type: "string"
+      description: "Initiator type"
+
+    - name: "calling_station_id"
+      source_col_name: "callingStationId"
+      type: "string"
+      description: "Calling station identifier"
+
+    - name: "calling_roam_country_code"
+      source_col_name: "callingRoamCountryCode"
+      type: "string"
+      description: "Calling roaming country code"
+
+    - name: "called_station_id"
+      source_col_name: "calledStationId"
+      type: "string"
+      description: "Called station identifier"
+
+    - name: "called_roam_country_code"
+      source_col_name: "calledRoamCountryCode"
+      type: "string"
+      description: "Called roaming country code"
+
+    - name: "called_home_country_code"
+      source_col_name: "calledHomeCountryCode"
+      type: "string"
+      description: "Called home country code"
+
+    - name: "original_called_station_id"
+      source_col_name: "originalCalledStationId"
+      type: "string"
+      description: "Original called station identifier"
+
+    - name: "presentation_called_station_id"
+      source_col_name: "presentationCalledStationID"
+      type: "string"
+      description: "Presentation called station identifier"
+
+    - name: "country_land_mobile"
+      source_col_name: "countryLandMobile"
+      type: "string"
+      description: "Country land mobile identifier"
+
+    - name: "call_answer_time"
+      source_col_name: "callAnswerTime"
+      type: "timestamp"
+      description: "Time when call was answered"
+
+    - name: "origination_cc_name"
+      source_col_name: "originationCCName"
+      type: "string"
+      description: "Origination country code name"
+
+    - name: "origination_cc_region"
+      source_col_name: "originationCCRegion"
+      type: "string"
+      description: "Origination country code region"
+
+    - name: "idd_cc_name"
+      source_col_name: "iddCCName"
+      type: "string"
+      description: "IDD country code name"
+
+    - name: "idd_cc_region"
+      source_col_name: "iddCCRegion"
+      type: "string"
+      description: "IDD country code region"
+
+    - name: "mcc_mnc_to_use"
+      source_col_name: "mccMncToUse"
+      type: "string"
+      description: "MCC/MNC to use"
+
+    - name: "wallet_id"
+      source_col_name: "walletId"
+      type: "string"
+      description: "Wallet identifier"
+
+    - name: "wallet_owner_id"
+      source_col_name: "walletOwnerId"
+      type: "string"
+      description: "Wallet owner identifier"
+
+    - name: "wallet_owner_external_id"
+      source_col_name: "walletOwnerExternalId"
+      type: "string"
+      description: "Wallet owner external identifier"
+
+    - name: "wallet_owner_type"
+      source_col_name: "walletOwnerType"
+      type: "string"
+      description: "Wallet owner type"
+
+    - name: "usage_rounding_amount"
+      source_col_name: "usageRoundingAmount"
+      type: "double"
+      description: "Usage rounding amount"
+
+    - name: "usage_rounding_amount_unit"
+      source_col_name: "usageRoundingAmountUnit"
+      type: "bigint"
+      description: "Usage rounding amount unit"
+
+    - name: "last_usage_rounding_amount"
+      source_col_name: "lastUsageRoundingAmount"
+      type: "double"
+      description: "Last usage rounding amount"
+
+    - name: "usage_utc_offset"
+      source_col_name: "usageUtcOffset"
+      type: "bigint"
+      description: "UTC offset for usage timestamp"
+
+    - name: "access_network_info"
+      source_col_name: "vMO2NetworkInfo__accessNetworkInfoAsString"
+      type: "string"
+      description: "Access network info from vMO2NetworkInfo"
+
+    - name: "destination_realm"
+      source_col_name: "vMO2NetworkInfo__destinationRealm"
+      type: "string"
+      description: "Destination realm from vMO2NetworkInfo"
+
+    - name: "mtx_container_name"
+      type: "string"
+      description: "Container name from MTX, used to identify the type of EDR"
+
+    - name: "mtx_ext_ver"
+      type: "string"
+
+    - name: "mtx_sys_ver"
+      type: "string"

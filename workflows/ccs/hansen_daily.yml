@@ -1,0 +1,84 @@
+resources:
+  jobs:
+    hansen_daily:
+      name: "hansen_daily"
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "4"
+            dependencies:
+              - ../../dist/*.whl
+      webhook_notifications:
+        on_failure:
+          - id: ${var.datahub_alert_slack_id}
+      tasks:
+        - task_key: load_subscription_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "hansen_daily",
+              "--task_name",
+              "load_subscription_bronze_table"
+            ]
+        - task_key: load_customer_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "hansen_daily",
+              "--task_name",
+              "load_customer_bronze_table"
+            ]
+        - task_key: load_subscription_feature_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "hansen_daily",
+              "--task_name",
+              "load_subscription_feature_bronze_table"
+            ]
+        - task_key: load_usage_error_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "hansen_daily",
+              "--task_name",
+              "load_usage_error_bronze_table"
+            ]
+        - task_key: load_adjustment_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "hansen_daily",
+              "--task_name",
+              "load_adjustment_bronze_table"
+            ]

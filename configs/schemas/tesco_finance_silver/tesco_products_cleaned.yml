@@ -1,0 +1,76 @@
+version: 1.0
+table:
+  name: "tesco_products_cleaned"
+  description: "Registry of all Tesco Mobile products"
+  tags:
+    "owner__tech": "Datahub (To Be Confirmed)"
+    "data__supplier": "Tesco - Products"
+    "data__domain": "finance"
+    "pii__exists": "false"
+    "pii__classification": "internal"
+
+  primary_keys:
+    - "product_id"
+  deduplication_keys:
+    - "last_modified_datetime_utc"
+  clustering_keys:
+    - "product_id"
+
+  flatten_config:
+    cols_to_explode:
+      - "products"
+    cols_to_exclude:
+      - "_metadata"
+  columns:
+    - name: "product_id"
+      source_col_name: "products__uniqueKey"
+      type: "string"
+      description: "A unique key for tesco mobile product"
+
+    - name: "item_number"
+      source_col_name: "products__itemNumber"
+      type: "string"
+
+    - name: "gtin"
+      source_col_name: "products__gtin"
+      type: "string"
+
+    - name: "tpna"
+      source_col_name: "products__tpna"
+      type: "string"
+
+    - name: "tpnb"
+      source_col_name: "products__tpnb"
+      type: "string"
+
+    - name: "tpnc"
+      source_col_name: "products__tpnc"
+      type: "string"
+
+    - name: "description"
+      source_col_name: "products__description"
+      type: "string"
+
+    - name: "brand"
+      source_col_name: "products__brand"
+      type: "string"
+
+    - name: "subclass_code"
+      source_col_name: "products__commercialHierarchy__subclassCode"
+      type: "string"
+
+    - name: "subclass_name"
+      source_col_name: "products__commercialHierarchy__subclassName"
+      type: "string"
+
+    - name: "subclass_number"
+      source_col_name: "products__commercialHierarchy__subclassNumber"
+      type: "long"
+
+    - name: "created_datetime_utc"
+      source_col_name: "products__createdDate"
+      type: "timestamp"
+
+    - name: "last_modified_datetime_utc"
+      source_col_name: "products__lastModifiedTime"
+      type: "timestamp"

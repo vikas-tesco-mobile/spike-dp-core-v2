@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://www.schemastore.org/databricks-asset-bundles.json
+resources:
+  jobs:
+    tesco_products_api_daily:
+      name: tesco_products_api_daily
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: 4
+            dependencies:
+              - ../../dist/*.whl
+      webhook_notifications:
+        on_failure:
+          - id: ${var.datahub_alert_slack_id}
+      tasks:
+        - task_key: extract_products
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/extractor/products_extractor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "tesco_products_api_daily",
+              "--task_name",
+              "extract_products"
+            ]
+        - task_key: load_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "tesco_products_api_daily",
+              "--task_name",
+              "load_bronze_table"
+            ]
+          depends_on:
+            - task_key: "extract_products"
+        - task_key: load_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "tesco_products_api_daily",
+              "--task_name",
+              "load_silver_table"
+            ]

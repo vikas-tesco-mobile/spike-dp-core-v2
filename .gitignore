@@ -1,0 +1,40 @@
+# Virtual Environment
+.venv/
+.conda/
+.pipenv/
+
+# Compiled Python files
+**/__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+.tox/
+.poetry
+artifacts
+
+# IDE-specific directories/files
+.idea/
+.vscode/
+*.sublime-workspace
+.project
+.settings/
+.directory
+
+# Operating System Files
+.DS_Store
+.Trashes
+Thumbs.db
+
+.databricks
+temp/
+metastore_db/
+logs
+
+# Ignore .env files
+configs/envs/.env
+.env

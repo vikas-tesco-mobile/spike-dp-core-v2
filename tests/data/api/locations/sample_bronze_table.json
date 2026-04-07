@@ -1,0 +1,58 @@
+{
+  "locations": [
+    {
+      "location": {
+        "country": {
+          "countryCode": "GB",
+          "subdivision": "ENG"
+        },
+        "format": {
+          "storeFormat": "Extra",
+          "detailedStoreFormat": "Extra"
+        },
+        "id": "9daa5428-2244-409b-96ac-695c5d71a41e",
+        "name": "Henleaze Esso Express - Petrol Filling Station",
+        "types": [
+          "Petrol-Filling-Station"
+        ]
+      },
+      "audit": {
+        "createdAt": "2021-03-10T13:38:58.707922Z",
+        "modifiedAt": "2022-12-13T13:56:32.202502Z"
+      },
+      "link": "/v4/locations/9daa5428-2244-409b-96ac-695c5d71a41e"
+    },
+    {
+      "location": {
+        "country": {
+          "countryCode": "GB",
+          "subdivision": "ENG"
+        },
+        "format": {
+          "storeFormat": "Extra",
+          "detailedStoreFormat": "Extra"
+        },
+        "id": "9dab8991-c382-4749-b1d0-bbf985b112b1",
+        "name": "Folkestone Superstore - Scan as you Shop",
+        "types": [
+          "Scan-as-you-Shop"
+        ]
+      },
+      "audit": {
+        "createdAt": "2019-10-18T11:12:05.087176Z",
+        "modifiedAt": "2021-03-10T13:43:59.063587Z"
+      },
+      "link": "/v4/locations/9dab8991-c382-4749-b1d0-bbf985b112b1"
+    }
+  ],
+  "totalCount": 2,
+  "_ingested_at": "2025-11-26T03:37:13.326",
+  "_metadata": {
+    "file_modification_time": "2025-11-26T03:36:28.000Z",
+    "file_block_length": "43274",
+    "file_name": "locations_2025112604_9100.json",
+    "file_size": "43274",
+    "file_block_start": "0",
+    "file_path": "/some-path/locations_2025112604_9100.json"
+  }
+}

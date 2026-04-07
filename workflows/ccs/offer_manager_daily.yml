@@ -1,0 +1,58 @@
+resources:
+  jobs:
+    offer_manager_daily:
+      name: "offer_manager_daily"
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "4"
+            dependencies:
+              - ../../dist/*.whl
+      webhook_notifications:
+        on_failure:
+          - id: ${var.datahub_alert_slack_id}
+      tasks:
+        - task_key: load_topup_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "offer_manager_daily",
+              "--task_name",
+              "load_topup_bronze_table"
+            ]
+
+        - task_key: load_sim_status_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "offer_manager_daily",
+              "--task_name",
+              "load_sim_status_bronze_table"
+            ]
+
+        - task_key: load_offer_addition_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "offer_manager_daily",
+              "--task_name",
+              "load_offer_addition_bronze_table"
+            ]

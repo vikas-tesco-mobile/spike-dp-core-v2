@@ -1,0 +1,91 @@
+version: 1.0
+table:
+  name: "usage_charge_cleaned"
+  description: "Flattened view of usage event chargeList fields"
+  tags:
+    owner__tech: "Revenue Assurance Team"
+    data__supplier: "MATRIX"
+    data__domain: "TBD"
+    pii__exists: "false"
+    pii__classification: "TBD"
+
+  primary_keys:
+    - "event_id"
+    - "charge_list_index"
+    - "applied_offer_index"
+    - "balance_update_index"
+  deduplication_keys:
+    - "event_datetime_utc"
+
+  flatten_config:
+    cols_to_explode:
+      - "chargeList"
+    cols_to_exclude:
+      - "_metadata"
+    explode_with_index_col: true
+
+  columns:
+    - name: "event_type"
+      source_col_name: "mtx_container_name"
+      type: "string"
+      description: "Type of an Event Data Record (EDR)"
+
+    - name: "event_id"
+      source_col_name: "eventId"
+      type: "string"
+      description: "Key event identifier used for deduplication"
+
+    - name: "event_datetime_utc"
+      source_col_name: "eventTime"
+      type: "timestamp"
+      description: "Event time (UTC)"
+
+    - name: "charge_list_index"
+      source_col_name: "chargeList__index"
+      type: "bigint"
+      description: "Array position for elements in chargeList"
+
+    - name: "amount"
+      source_col_name: "chargeList__amount"
+      type: "double"
+      description: "Charge amount from chargeList"
+
+    - name: "payment_type"
+      source_col_name: "chargeList__paymentType"
+      type: "bigint"
+      description: "Payment type from chargeList"
+
+    - name: "update_type"
+      source_col_name: "chargeList__updateType"
+      type: "bigint"
+      description: "Update type from chargeList"
+
+    - name: "impact_source"
+      source_col_name: "chargeList__impactSource"
+      type: "string"
+      description: "Impact source from chargeList"
+
+    - name: "usage_quantity"
+      source_col_name: "chargeList__usageQuantity"
+      type: "double"
+      description: "Usage quantity from chargeList"
+
+    - name: "usage_quantity_unit"
+      source_col_name: "chargeList__usageQuantityUnit"
+      type: "bigint"
+      description: "Usage quantity unit from chargeList"
+
+    - name: "applied_offer_index"
+      source_col_name: "chargeList__appliedOfferIndex"
+      type: "bigint"
+      description: "Cross-reference index to appliedOfferArray"
+
+    - name: "applied_tax_index"
+      source_col_name: "chargeList__appliedTaxIndex"
+      type: "bigint"
+      description: "Cross-reference index to appliedTaxArray"
+
+    - name: "balance_update_index"
+      source_col_name: "chargeList__balanceUpdateIndex"
+      type: "bigint"
+      description: "Cross-reference index to balanceUpdateArray"

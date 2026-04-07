@@ -1,0 +1,96 @@
+version: 1.0
+table:
+  name: "usage_balance_update_cleaned"
+  description: "Flattened view of usage event balanceUpdateArray fields"
+  tags:
+    owner__tech: "Revenue Assurance Team"
+    data__supplier: "MATRIX"
+    data__domain: "TBD"
+    pii__exists: "false"
+    pii__classification: "TBD"
+
+  primary_keys:
+    - "event_id"
+    - "balance_class_id"
+    - "balance_template_id"
+    - "balance_update_array_index"
+  deduplication_keys:
+    - "event_datetime_utc"
+
+  flatten_config:
+    cols_to_explode:
+      - "balanceUpdateArray"
+    cols_to_exclude:
+      - "_metadata"
+    explode_with_index_col: true
+
+  columns:
+    - name: "event_type"
+      source_col_name: "mtx_container_name"
+      type: "string"
+      description: "Type of an Event Data Record (EDR)"
+
+    - name: "event_id"
+      source_col_name: "eventId"
+      type: "string"
+      description: "Key event identifier used for deduplication"
+
+    - name: "event_datetime_utc"
+      source_col_name: "eventTime"
+      type: "timestamp"
+      description: "Event time (UTC)"
+
+    - name: "balance_update_array_index"
+      source_col_name: "balanceUpdateArray__index"
+      type: "bigint"
+      description: "Array position for elements in balanceUpdateArray"
+
+    - name: "balance_class_id"
+      source_col_name: "balanceUpdateArray__balanceClassId"
+      type: "bigint"
+      description: "Balance class identifier from balanceUpdateArray"
+
+    - name: "balance_amount"
+      source_col_name: "balanceUpdateArray__amount"
+      type: "double"
+      description: "Balance amount from balanceUpdateArray"
+
+    - name: "balance_resource_id"
+      source_col_name: "balanceUpdateArray__balanceResourceId"
+      type: "bigint"
+      description: "Balance resource identifier from balanceUpdateArray"
+
+    - name: "balance_template_id"
+      source_col_name: "balanceUpdateArray__balanceTemplateId"
+      type: "bigint"
+      description: "Balance template identifier from balanceUpdateArray"
+
+    - name: "balance_interval_id"
+      source_col_name: "balanceUpdateArray__balanceIntervalId"
+      type: "bigint"
+      description: "Balance interval identifier from balanceUpdateArray"
+
+    - name: "balance_start_time"
+      source_col_name: "balanceUpdateArray__balanceStartTime"
+      type: "timestamp"
+      description: "Balance period start time from balanceUpdateArray"
+
+    - name: "balance_end_time"
+      source_col_name: "balanceUpdateArray__balanceEndTime"
+      type: "timestamp"
+      description: "Balance period end time from balanceUpdateArray"
+
+    - name: "gross_amount_after"
+      source_col_name: "balanceUpdateArray__grossAmountAfter"
+      type: "double"
+      description: "Gross balance amount after update from balanceUpdateArray"
+
+    - name: "debt_balance_type"
+      source_col_name: "balanceUpdateArray__debtBalanceType"
+      type: "string"
+      description: "Debt balance type from balanceUpdateArray"
+
+    - name: "flags"
+      source_col_name: "balanceUpdateArray__flags"
+      type: "bigint"
+      description: "Flags from balanceUpdateArray"

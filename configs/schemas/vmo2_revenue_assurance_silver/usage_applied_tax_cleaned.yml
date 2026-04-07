@@ -1,0 +1,65 @@
+version: 1.0
+table:
+  name: "usage_applied_tax_cleaned"
+  description: "Flattened view of usage event appliedTaxArray fields"
+  tags:
+    owner__tech: "Revenue Assurance Team"
+    data__supplier: "MATRIX"
+    data__domain: "TBD"
+    pii__exists: "false"
+    pii__classification: "TBD"
+
+  primary_keys:
+    - "event_id"
+    - "applied_tax_array_index"
+    - "tax_code"
+  deduplication_keys:
+    - "event_datetime_utc"
+
+  flatten_config:
+    cols_to_explode:
+      - "appliedTaxArray"
+    cols_to_exclude:
+      - "_metadata"
+    explode_with_index_col: true
+
+  columns:
+    - name: "event_type"
+      source_col_name: "mtx_container_name"
+      type: "string"
+      description: "Type of an Event Data Record (EDR)"
+
+    - name: "event_id"
+      source_col_name: "eventId"
+      type: "string"
+      description: "Key event identifier used for deduplication"
+
+    - name: "event_datetime_utc"
+      source_col_name: "eventTime"
+      type: "timestamp"
+      description: "Event time (UTC)"
+
+    - name: "applied_tax_array_index"
+      source_col_name: "appliedTaxArray__index"
+      type: "bigint"
+      description: "Array position for elements in appliedTaxArray"
+
+    - name: "tax_code"
+      source_col_name: "appliedTaxArray__taxCode"
+      type: "string"
+      description: "Tax code identifier from appliedTaxArray"
+
+    - name: "tax_name"
+      source_col_name: "appliedTaxArray__name"
+      type: "string"
+      description: "Tax name from appliedTaxArray"
+
+    - name: "tax_rate"
+      source_col_name: "appliedTaxArray__rate"
+      type: "decimal(18,8)"
+      description: "Tax rate from appliedTaxArray"
+
+    - name: "external_id"
+      source_col_name: "appliedTaxArray__externalId"
+      type: "string"
+      description: "External identifier from appliedTaxArray"

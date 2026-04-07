@@ -1,0 +1,87 @@
+version: 1.0
+table:
+  name: "usage_applied_catalog_item_cleaned"
+  description: "Flattened view of usage event appliedCatalogItemArray fields"
+  tags:
+    owner__tech: "Revenue Assurance Team"
+    data__supplier: "MATRIX"
+    data__domain: "TBD"
+    pii__exists: "false"
+    pii__classification: "TBD"
+
+  primary_keys:
+    - "event_id"
+    - "applied_catalog_item_array_index"
+    - "catalog_item_resource_id"
+  deduplication_keys:
+    - "event_datetime_utc"
+
+  flatten_config:
+    cols_to_explode:
+      - "appliedCatalogItemArray"
+    cols_to_exclude:
+      - "_metadata"
+      - "appliedCatalogItemArray__catalogItemTemplateAttr__originationLocations"
+      - "appliedCatalogItemArray__catalogItemTemplateAttr__destinationLocations"
+    explode_with_index_col: true
+
+  columns:
+    - name: "event_type"
+      source_col_name: "mtx_container_name"
+      type: "string"
+      description: "Type of an Event Data Record (EDR)"
+
+    - name: "event_id"
+      source_col_name: "eventId"
+      type: "string"
+      description: "Key event identifier used for deduplication"
+
+    - name: "event_datetime_utc"
+      source_col_name: "eventTime"
+      type: "timestamp"
+      description: "Event time (UTC)"
+
+    - name: "applied_catalog_item_array_index"
+      source_col_name: "appliedCatalogItemArray__index"
+      type: "bigint"
+      description: "Array position for elements in appliedCatalogItemArray"
+
+    - name: "catalog_item_id"
+      source_col_name: "appliedCatalogItemArray__catalogItemId"
+      type: "bigint"
+      description: "Catalog item identifier from appliedCatalogItemArray"
+
+    - name: "catalog_item_external_id"
+      source_col_name: "appliedCatalogItemArray__catalogItemExternalId"
+      type: "string"
+      description: "External catalog item identifier from appliedCatalogItemArray"
+
+    - name: "catalog_item_resource_id"
+      source_col_name: "appliedCatalogItemArray__catalogItemResourceId"
+      type: "bigint"
+      description: "Catalog item resource identifier from appliedCatalogItemArray"
+
+    - name: "activation_datetime_utc"
+      source_col_name: "appliedCatalogItemArray__activationTime"
+      type: "timestamp"
+      description: "Activation time for the catalog item in UTC"
+
+    - name: "end_datetime_utc"
+      source_col_name: "appliedCatalogItemArray__endTime"
+      type: "timestamp"
+      description: "End time for the catalog item in UTC"
+
+    - name: "offer_type"
+      source_col_name: "appliedCatalogItemArray__catalogItemTemplateAttr__offerType"
+      type: "string"
+      description: "offerType from catalogItemTemplateAttr"
+
+    - name: "destination_locations"
+      source_col_name: "appliedCatalogItemArray__catalogItemTemplateAttr__destinationLocations"
+      type: "array<string>"
+      description: "destinationLocations from catalogItemTemplateAttr"
+
+    - name: "origination_locations"
+      source_col_name: "appliedCatalogItemArray__catalogItemTemplateAttr__originationLocations"
+      type: "array<string>"
+      description: "originationLocations from catalogItemTemplateAttr"

@@ -1,0 +1,339 @@
+{# Jinja2 template for environment configuration #}
+
+{#- Derived path variables -#}
+{%- set developer_prefix = (developer_prefix ~ "_") if developer_prefix else "" -%}
+{%- set volume_base = "/Volumes/" ~ catalog -%}
+{%- set landing_zone = volume_base ~ "/landing_zone/sources" -%}
+{%- set checkpoint_base = volume_base ~ "/platform/internal/checkpoints/" ~ developer_prefix  -%}
+{%- set outbound_base = volume_base ~ "/platform/outbound/" ~ developer_prefix -%}
+
+{#- Catalog.Schema variables -#}
+{%- set catalog_tesco_api_bronze_schema = catalog ~ ".`" ~ developer_prefix ~ "tesco_api_bronze`" -%}
+{%- set catalog_tesco_kafka_bronze_schema = catalog ~ ".`" ~ developer_prefix ~ "tesco_kafka_bronze`" -%}
+{%- set catalog_tesco_tap_bronze_schema = catalog ~ ".`" ~ developer_prefix ~ "tesco_tap_bronze`" -%}
+{%- set catalog_tesco_finance_silver_schema = catalog ~ ".`" ~ developer_prefix ~ "tesco_finance_silver`" -%}
+{%- set catalog_finance_gold_schema = catalog ~ ".`" ~ developer_prefix ~ "finance_gold`" -%}
+{%- set catalog_vmo2_mft_bronze_schema = catalog ~ ".`" ~ developer_prefix ~ "vmo2_mft_bronze`" -%}
+{%- set catalog_revenue_assurance_gold_schema = catalog ~ ".`" ~ developer_prefix ~ "revenue_assurance_gold`" -%}
+{%- set catalog_offer_manager_s3_bronze_schema = catalog ~ ".`" ~ developer_prefix ~ "offer_manager_s3_bronze`" -%}
+{%- set catalog_hansen_sftp_bronze_schema = catalog ~ ".`" ~ developer_prefix ~ "hansen_sftp_bronze`" -%}
+{#- Dynamic auth variables based on env -#}
+{%- if env == "dev" -%}
+  {%- set secret_scope = "eun-dev-906-dh-kv-scope" -%}
+  {%- set client_id_key = "TM-API-GW-CLIENT-ID" -%}
+  {%- set client_secret_key = "TM-API-GW-CLIENT-SECRET" -%}
+  {%- set auth_url = "https://stg2.api.tescomobile.com/oauth2/v2/access_token" -%}
+  {%- set api_base_url = "https://stg.api.tescomobile.com" -%}
+  {%- set product_list_url= "https://stg.api.tescomobile.com/products/v1/tesco/products/commercial" -%}
+  {%- set products_by_id_url= "https://stg.api.tescomobile.com/products/v1/tesco/productsById" -%}
+{%- elif env == "int" -%}
+  {%- set secret_scope = "eun-int-906-dh-kv-scope" -%}
+  {%- set client_id_key = "TM-API-GW-CLIENT-ID" -%}
+  {%- set client_secret_key = "TM-API-GW-CLIENT-SECRET" -%}
+  {%- set auth_url = "https://stg2.api.tescomobile.com/oauth2/v2/access_token" -%}
+  {%- set api_base_url = "https://stg.api.tescomobile.com" -%}
+  {%- set product_list_url= "https://stg.api.tescomobile.com/products/v1/tesco/products/commercial" -%}
+  {%- set products_by_id_url= "https://stg.api.tescomobile.com/products/v1/tesco/productsById" -%}
+{%- elif env == "ppe" -%}
+  {%- set secret_scope = "eun-ppe-906-dh-kv-scope" -%}
+  {%- set client_id_key = "TM-API-GW-CLIENT-ID" -%}
+  {%- set client_secret_key = "TM-API-GW-CLIENT-SECRET" -%}
+  {%- set auth_url = "https://stg2.api.tescomobile.com/oauth2/v2/access_token" -%}
+  {%- set api_base_url = "https://stg.api.tescomobile.com" -%}
+  {%- set product_list_url= "https://stg.api.tescomobile.com/products/v1/tesco/products/commercial" -%}
+  {%- set products_by_id_url= "https://stg.api.tescomobile.com/products/v1/tesco/productsById" -%}
+{%- elif env == "prod" -%}
+  {%- set secret_scope = "eun-prod-906-dh-kv-scope" -%}
+  {%- set client_id_key = "" -%}
+  {%- set client_secret_key = "" -%}
+  {%- set auth_url = "" -%}
+  {%- set api_base_url = "" -%}
+  {%- set product_list_url= "" -%}
+  {%- set products_by_id_url= "" -%}
+{%- endif -%}
+_silver_task_defaults: &silver_task_defaults
+  catalog: {{ catalog }}
+  schema_prefix: {{ developer_prefix }}
+
+tesco_locations_api_daily:
+  extract_location_api:
+    authentication:
+      auth_url: {{ auth_url }}
+      secret_scope: {{ secret_scope }}
+      client_id_key: {{ client_id_key }}
+      client_secret_key: {{ client_secret_key }}
+    location_url: {{ api_base_url }}/stock/v1/locations
+    request_params:
+      fields: format
+    limit: 100
+    target_path: {{ landing_zone }}/tesco/api/locations/v1
+
+  load_bronze_table:
+    source_type: file
+    file_format: json
+    source_path: {{ landing_zone }}/tesco/api/locations/v1
+    target_table: {{ catalog_tesco_api_bronze_schema }}.tesco_locations_raw
+    schema_location: {{ checkpoint_base }}tesco/api/bronze/tesco_locations_raw
+    checkpoint_location: {{ checkpoint_base }}tesco/api/bronze/tesco_locations_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      multiline: true
+
+  load_silver_table:
+    schema_config_file_name: tesco_locations_cleaned
+    bronze_table: {{ catalog_tesco_api_bronze_schema }}.tesco_locations_raw
+    <<: *silver_task_defaults
+
+tesco_quote_stream_daily:
+  load_bronze_table:
+    source_type: file
+    file_format: json
+    source_path: {{ landing_zone }}/tesco/kafka/quote/v1
+    target_table: {{ catalog_tesco_kafka_bronze_schema }}.tesco_quotes_raw
+    schema_location: {{ checkpoint_base }}tesco/kafka/bronze/tesco_quotes_raw
+    checkpoint_location: {{ checkpoint_base }}tesco/kafka/bronze/tesco_quotes_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      multiline: true
+
+tesco_products_api_daily:
+  extract_products:
+    authentication:
+      auth_url: {{ auth_url }}
+      secret_scope: {{ secret_scope }}
+      client_id_key: {{ client_id_key }}
+      client_secret_key: {{ client_secret_key }}
+    product_list:
+      url: {{ product_list_url }}
+      request_params:
+        sectionCode: 
+          - V11
+          - V13
+          - V15
+          - V19
+    products_by_id:
+      url: {{ products_by_id_url }}
+    target_path: {{ landing_zone }}/tesco/api/products/v1
+    batch_size: 50
+
+  load_bronze_table:
+    source_type: file
+    file_format: json
+    source_path: {{ landing_zone }}/tesco/api/products/v1
+    target_table: {{ catalog_tesco_api_bronze_schema }}.tesco_products_raw
+    schema_location: {{ checkpoint_base }}tesco/api/bronze/tesco_products_raw
+    checkpoint_location: {{ checkpoint_base }}tesco/api/bronze/tesco_products_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options: 
+      multiline: true
+
+  load_silver_table:
+    schema_config_file_name: tesco_products_cleaned
+    bronze_table: {{ catalog_tesco_api_bronze_schema }}.tesco_products_raw
+    <<: *silver_task_defaults
+
+sale_transactions_exporter:
+  table_name: {{ catalog_finance_gold_schema }}.tesco_sales_transactions
+  file_format: csv
+  filename_prefix: sale_transactions
+  output_location: {{ outbound_base }}/sale_transactions
+  additional_write_options:
+    header: true
+    sep: ","
+
+blugem_ccs_usage_reconciliation_exporter:
+  table_name: {{ catalog_revenue_assurance_gold_schema }}.blugem_ccs_usage_reconciliation
+  file_format: csv
+  filename_prefix: blugem_ccs_usage_reconciliation
+  output_location: {{ outbound_base }}/blugem_ccs_usage_reconciliation
+  additional_write_options:
+    header: true
+    sep: ","
+    quoteAll: true
+
+table_metadata_updater:
+  catalog: {{ catalog }}
+  schema_prefix: {{ developer_prefix }}
+
+tesco_tap_sales:
+  load_store_sales_bronze_table:
+    source_type: file
+    file_format: csv
+    source_path: {{ landing_zone }}/tap/sftp/store_sales
+    target_table: {{ catalog_tesco_tap_bronze_schema }}.tap_store_sales_raw
+    schema_location: {{ checkpoint_base }}tesco/tap/sftp/bronze/tap_store_sales_raw
+    checkpoint_location: {{ checkpoint_base }}tesco/tap/sftp/bronze/tap_store_sales_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      header : "true"
+      sep: "\t"
+  load_store_sales_silver_table:
+    schema_config_file_name: tesco_tap_store_sales_cleaned
+    bronze_table: {{ catalog_tesco_tap_bronze_schema }}.tap_store_sales_raw
+    <<: *silver_task_defaults
+  load_online_sales_bronze_table:
+    source_type: file
+    file_format: csv
+    source_path: {{ landing_zone }}/tap/sftp/online_sales
+    target_table: {{ catalog_tesco_tap_bronze_schema }}.tap_online_sales_raw
+    schema_location: {{ checkpoint_base }}tesco/tap/sftp/bronze/tap_online_sales_raw
+    checkpoint_location: {{ checkpoint_base }}tesco/tap/sftp/bronze/tap_online_sales_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      header : "true"
+      sep: "\t"
+  load_online_sales_silver_table:
+    schema_config_file_name: tesco_tap_online_sales_cleaned
+    bronze_table: {{ catalog_tesco_tap_bronze_schema }}.tap_online_sales_raw
+    <<: *silver_task_defaults
+
+vmo2_mft_usage_daily:
+  load_bronze_table:
+    source_type: file
+    file_format: json
+    source_path: {{ landing_zone }}/vmo2/mft/usage/
+    target_table: {{ catalog_vmo2_mft_bronze_schema }}.vmo2_usage_raw
+    schema_location: {{ checkpoint_base }}vm02/mft/bronze/vmo2_usage_raw
+    checkpoint_location: {{ checkpoint_base }}vm02/mft/bronze/vmo2_usage_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      multiline: false
+  load_usage_root_silver_table:
+    schema_config_file_name: usage_root_cleaned
+    bronze_table: {{ catalog_vmo2_mft_bronze_schema }}.vmo2_usage_raw
+    <<: *silver_task_defaults
+  load_usage_charge_silver_table:
+    schema_config_file_name: usage_charge_cleaned
+    bronze_table: {{ catalog_vmo2_mft_bronze_schema }}.vmo2_usage_raw
+    <<: *silver_task_defaults
+  load_usage_applied_offer_silver_table:
+    schema_config_file_name: usage_applied_offer_cleaned
+    bronze_table: {{ catalog_vmo2_mft_bronze_schema }}.vmo2_usage_raw
+    <<: *silver_task_defaults
+  load_usage_applied_bundle_silver_table:
+    schema_config_file_name: usage_applied_bundle_cleaned
+    bronze_table: {{ catalog_vmo2_mft_bronze_schema }}.vmo2_usage_raw
+    <<: *silver_task_defaults
+  load_usage_applied_catalog_item_silver_table:
+    schema_config_file_name: usage_applied_catalog_item_cleaned
+    bronze_table: {{ catalog_vmo2_mft_bronze_schema }}.vmo2_usage_raw
+    <<: *silver_task_defaults
+  load_usage_applied_tax_silver_table:
+    schema_config_file_name: usage_applied_tax_cleaned
+    bronze_table: {{ catalog_vmo2_mft_bronze_schema }}.vmo2_usage_raw
+    <<: *silver_task_defaults
+  load_usage_balance_update_silver_table:
+    schema_config_file_name: usage_balance_update_cleaned
+    bronze_table: {{ catalog_vmo2_mft_bronze_schema }}.vmo2_usage_raw
+    <<: *silver_task_defaults
+  load_usage_quantity_silver_table:
+    schema_config_file_name: usage_quantity_cleaned
+    bronze_table: {{ catalog_vmo2_mft_bronze_schema }}.vmo2_usage_raw
+    <<: *silver_task_defaults
+ 
+
+offer_manager_daily:
+  load_topup_bronze_table:
+    source_type: file
+    file_format: csv
+    source_path: {{ landing_zone }}/offer_manager/s3/topup_report/
+    target_table: {{ catalog_offer_manager_s3_bronze_schema }}.topup_report_raw
+    schema_location: {{ checkpoint_base }}offer_manager/s3/bronze/topup_report_raw
+    checkpoint_location: {{ checkpoint_base }}offer_manager/s3/bronze/topup_report_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      header: "true"
+      sep: ","
+  load_sim_status_bronze_table:
+    source_type: file
+    file_format: csv
+    source_path: {{ landing_zone }}/offer_manager/s3/sim_status_report/
+    target_table: {{ catalog_offer_manager_s3_bronze_schema }}.sim_status_report_raw
+    schema_location: {{ checkpoint_base }}offer_manager/s3/bronze/sim_status_report_raw
+    checkpoint_location: {{ checkpoint_base }}offer_manager/s3/bronze/sim_status_report_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      header: "true"
+      sep: ","
+  load_offer_addition_bronze_table:
+    source_type: file
+    file_format: csv
+    source_path: {{ landing_zone }}/offer_manager/s3/offer_addition_report/
+    target_table: {{ catalog_offer_manager_s3_bronze_schema }}.offer_addition_report_raw
+    schema_location: {{ checkpoint_base }}offer_manager/s3/bronze/offer_addition_report_raw
+    checkpoint_location: {{ checkpoint_base }}offer_manager/s3/bronze/offer_addition_report_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      header: "true"
+      sep: ","
+
+hansen_daily:
+  load_subscription_bronze_table:
+    source_type: file
+    file_format: csv
+    source_path: {{ landing_zone }}/hansen/sftp/subscription/
+    target_table: {{ catalog_hansen_sftp_bronze_schema }}.subscription_raw
+    schema_location: {{ checkpoint_base }}hansen/sftp/bronze/subscription_raw
+    checkpoint_location: {{ checkpoint_base }}hansen/sftp/bronze/subscription_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      header: "true"
+      sep: "|"
+  load_customer_bronze_table:
+    source_type: file
+    file_format: csv
+    source_path: {{ landing_zone }}/hansen/sftp/customer/
+    target_table: {{ catalog_hansen_sftp_bronze_schema }}.customer_raw
+    schema_location: {{ checkpoint_base }}hansen/sftp/bronze/customer_raw
+    checkpoint_location: {{ checkpoint_base }}hansen/sftp/bronze/customer_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      header: "true"
+      sep: "|"
+  load_subscription_feature_bronze_table:
+      source_type: file
+      file_format: csv
+      source_path: {{ landing_zone }}/hansen/sftp/subscription_feature/
+      target_table: {{ catalog_hansen_sftp_bronze_schema }}.subscription_feature_raw
+      schema_location: {{ checkpoint_base }}hansen/sftp/bronze/subscription_feature_raw
+      checkpoint_location: {{ checkpoint_base }}hansen/sftp/bronze/subscription_feature_raw
+      infer_column_types: true
+      trigger_option_available_now: true
+      additional_read_options:
+        header: "true"
+        sep: "|"
+  load_usage_error_bronze_table:
+    source_type: file
+    file_format: csv
+    source_path: {{ landing_zone }}/hansen/sftp/usage_error/
+    target_table: {{ catalog_hansen_sftp_bronze_schema }}.usage_error_raw
+    schema_location: {{ checkpoint_base }}hansen/sftp/bronze/usage_error_raw
+    checkpoint_location: {{ checkpoint_base }}hansen/sftp/bronze/usage_error_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      header: "true"
+      sep: "|"
+  load_adjustment_bronze_table:
+    source_type: file
+    file_format: csv
+    source_path: {{ landing_zone }}/hansen/sftp/adjustment/
+    target_table: {{ catalog_hansen_sftp_bronze_schema }}.adjustment_raw
+    schema_location: {{ checkpoint_base }}hansen/sftp/bronze/adjustment_raw
+    checkpoint_location: {{ checkpoint_base }}hansen/sftp/bronze/adjustment_raw
+    infer_column_types: true
+    trigger_option_available_now: true
+    additional_read_options:
+      header: "true"
+      sep: "|"

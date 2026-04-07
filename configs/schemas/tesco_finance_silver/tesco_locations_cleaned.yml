@@ -1,0 +1,44 @@
+version: 1.0
+table:
+  name: "tesco_locations_cleaned"
+  description: "Registry of all Tesco physical store locations"
+  tags:
+    "owner__tech": "Datahub (To Be Confirmed)"
+    "data__supplier": "Tesco - Locations"
+    "data__domain": "finance"
+    "pii__exists": "false"
+    "pii__classification": "internal"
+  primary_keys:
+    - "location_id"
+  deduplication_keys:
+    - "modified_datetime_utc"
+  clustering_keys:
+    - "location_id"
+  flatten_config:
+    cols_to_explode:
+      - "locations"
+    cols_to_exclude:
+      - "_metadata"
+  columns:
+    - name: "location_id"
+      source_col_name: "locations__location__id"
+      type: "string"
+      description: "A unique key for store location"
+    - name: "location_name"
+      source_col_name: "locations__location__name"
+      type: "string"
+    - name: "country_code"
+      source_col_name: "locations__location__country__countryCode"
+      type: "string"
+    - name: "store_format"
+      source_col_name: "locations__location__format__storeFormat"
+      type: "string"
+    - name: "detailed_store_format"
+      source_col_name: "locations__location__format__detailedStoreFormat"
+      type: "string"
+    - name: "created_datetime_utc"
+      source_col_name: "locations__audit__createdAt"
+      type: "timestamp"
+    - name: "modified_datetime_utc"
+      source_col_name: "locations__audit__modifiedAt"
+      type: "timestamp"

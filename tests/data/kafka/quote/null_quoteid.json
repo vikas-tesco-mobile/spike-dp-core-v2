@@ -1,0 +1,99 @@
+{
+  "type": "quote",
+  "metadata": {
+    "archived": false,
+    "expiry": "2025-09-01T10:00:00.000+0000",
+    "unarchivedAt": null,
+    "publishedEvents": [
+      {
+        "eventId": "a1a1a1a1-1001-4e7b-b1b5-54cd0388cfac",
+        "action": "success"
+      }
+    ]
+  },
+  "events": [
+    {
+      "traceId": "b1b1b1b1-1001-4474-8a74-a4322e30fdc2",
+      "clientId": "c1c1c1c1-1001-4e8d-83e7-8167611ae6e5",
+      "reconciliationAddendum": {
+        "salesTaxes": [
+          {
+            "taxAuthority": "GB",
+            "promotionTaxBreakdown": [],
+            "gtin": "00112233445566",
+            "taxCode": "S",
+            "taxAmount": "20.00",
+            "taxAuthorityAmount": "20.0000"
+          }
+        ]
+      },
+      "idempotentId": "idemp-key-0001",
+      "id": "a1a1a1a1-1001-4e7b-b1b5-54cd0388cfac",
+      "invoice": {
+        "salesTaxTotals": {
+          "total": "20.00",
+          "breakdown": [
+            {
+              "taxAuthority": "GB",
+              "total": "20.00",
+              "grossSalesAmount": "100.00",
+              "taxCode": "S"
+            }
+          ]
+        },
+        "salesTaxes": [
+          {
+            "taxAuthority": "GB",
+            "gtin": "00112233445566",
+            "taxAmount": "20.00",
+            "taxCode": "S"
+          }
+        ],
+        "effectivePricingDate": "2025-08-20T10:15:00.000+0000",
+        "totals": {
+          "totalReturns": "0.00",
+          "totalBeforeDiscounts": "100.00",
+          "totalAfterDiscounts": "100.00",
+          "totalReturnsBeforeDiscounts": "0.00",
+          "grandTotal": "100.00",
+          "totalCharges": "0.00",
+          "totalPayouts": "0.00",
+          "totalReturnsCharges": "0.00",
+          "totalClaimedRewards": "0.00"
+        },
+        "store": "2001",
+        "quoteId": "",
+        "pricingLocationId": "e1e1e1e1-1001-4c83-a03a-4cb20cd8b13d",
+        "products": [
+          {
+            "gtin": "00112233445566",
+            "charges": [],
+            "sellerId": "trn:tesco:tradingpartner:uuid:tesco",
+            "lineItemId": "f1f1f1f1-1001-4339-ab9b-be3f712c4e29",
+            "priceBeforeDiscounts": "100.00",
+            "priceAfterDiscounts": "100.00"
+          }
+        ],
+        "quoteCreationDate": "2025-08-20T10:14:00.000+0000",
+        "payouts": [],
+        "charges": [],
+        "paidDate": "2025-08-20T10:15:00.000+0000",
+        "isTest": false,
+        "locationId": "trn:tesco:tescolocation:branch:GB:2001",
+        "customerId": "trn:tesco:uid:uuid:cust-1001-4365-bd02-a82179720491",
+        "orderReference": "trn:tesco:order:v3:r1:uuid:order-1001-4f6d-acfb-f8330d11c759",
+        "returns": [],
+        "invoiceId": "d1d1d1d1-1001-3bce-93e8-00a50517973f",
+        "currency": "GBP",
+        "state": "paid",
+        "fulfilmentLocationId": "e1e1e1e1-1001-4c83-a03a-4cb20cd8b13d",
+        "pointOfSale": "uk-2001-pos-01",
+        "rewards": [],
+        "claimableRewards": []
+      },
+      "type": "paid",
+      "version": "1",
+      "timestamp": "2025-08-20T10:15:00.000+0000"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+[project]
+name = "dp-core"
+version = "0.1.0"
+description = "Core repository for Data Platform - Bronze, Silver layers and all workflow orchestration"
+readme = "README.md"
+requires-python = ">=3.12.3,<3.12.4"
+packages = [{ include = "dp_core", from = "src" }]
+dependencies = [
+    "pyyaml (>=6.0.3,<7.0.0)",
+    "requests (>=2.32.5,<3.0.0)",
+    "databricks-sdk (<0.68)",
+    "tenacity (>=9.1.2,<10.0.0)",
+    "urllib3 (>=2.6.0,<3.0.0)",
+    "sqlparse (>=0.5.4,<0.6.0)",
+    "jinja2 (>=3.1.0,<4.0.0)",
+    "pyasn1 (>=0.6.3)",
+    "python-dotenv (>=1.2.1,<2.0.0)",
+    "pydantic (==2.12.5)",
+    "sqlglot (>=29.0.1,<30.0.0)",
+]
+
+[dependency-groups]
+dev = [
+    "pytest (>=8.4.2,<9.0.0)",
+    "ruff (>=0.14.3,<0.15.0)",
+    "mypy (>=1.18.2,<2.0.0)",
+    "types-pyyaml (>=6.0.12.20250915,<7.0.0.0)",
+    "pre-commit (>=4.3.0,<5.0.0)",
+    "pytest-cov (>=7.0.0,<8.0.0)",
+    "pyspark (==4.0.0)",
+    "delta-spark (==4.0.0)",
+    "types-requests (>=2.32.4.20250913,<3.0.0.0)",
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

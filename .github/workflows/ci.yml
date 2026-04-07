@@ -1,0 +1,42 @@
+name: CI
+on:
+  push:
+
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+      - name: Install Poetry 2.2.1
+        env:
+          POETRY_VERSION: 2.2.1
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 - --version $POETRY_VERSION
+          export PATH="$HOME/.local/bin:$PATH"
+      - name: Install dependencies
+        run: |
+          poetry install --with dev
+      - name: Run pre-commit (all hooks)
+        run: |
+          poetry run pre-commit run --all-files --show-diff-on-failure
+      - name: Run Python Unit tests
+        run: |
+          poetry run pytest --cov=src/dp_core --cov-report=xml
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+      - name: Get Coverage
+        uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}

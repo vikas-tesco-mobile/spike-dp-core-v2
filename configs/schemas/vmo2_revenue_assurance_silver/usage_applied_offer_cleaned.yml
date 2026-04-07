@@ -1,0 +1,95 @@
+version: 1.0
+table:
+  name: "usage_applied_offer_cleaned"
+  description: "Flattened view of usage event appliedOfferArray fields"
+  tags:
+    owner__tech: "Revenue Assurance Team"
+    data__supplier: "MATRIX"
+    data__domain: "TBD"
+    pii__exists: "false"
+    pii__classification: "TBD"
+
+  primary_keys:
+    - "event_id"
+    - "product_offer_id"
+    - "applied_offer_array_index"
+  deduplication_keys:
+    - "event_datetime_utc"
+
+  flatten_config:
+    cols_to_explode:
+      - "appliedOfferArray"
+    cols_to_exclude:
+      - "_metadata"
+    explode_with_index_col: true
+
+  columns:
+    - name: "event_type"
+      source_col_name: "mtx_container_name"
+      type: "string"
+      description: "Type of an Event Data Record (EDR)"
+
+    - name: "event_id"
+      source_col_name: "eventId"
+      type: "string"
+      description: "Key event identifier used for deduplication"
+
+    - name: "event_datetime_utc"
+      source_col_name: "eventTime"
+      type: "timestamp"
+      description: "Event time (UTC)"
+
+    - name: "applied_offer_array_index"
+      source_col_name: "appliedOfferArray__index"
+      type: "bigint"
+      description: "Array position for elements in appliedOfferArray"
+
+    - name: "product_offer_id"
+      source_col_name: "appliedOfferArray__productOfferId"
+      type: "bigint"
+      description: "Product offer identifier from appliedOfferArray"
+
+    - name: "product_offer_external_id"
+      source_col_name: "appliedOfferArray__productOfferExternalId"
+      type: "string"
+      description: "Product offer external identifier from appliedOfferArray"
+
+    - name: "product_offer_owner_id"
+      source_col_name: "appliedOfferArray__productOfferOwnerId"
+      type: "string"
+      description: "Product offer owner identifier from appliedOfferArray"
+
+    - name: "product_offer_external_owner_id"
+      source_col_name: "appliedOfferArray__productOfferExternalOwnerId"
+      type: "string"
+      description: "Product offer external owner identifier from appliedOfferArray"
+
+    - name: "product_offer_resource_id"
+      source_col_name: "appliedOfferArray__productOfferResourceId"
+      type: "bigint"
+      description: "Product offer resource identifier from appliedOfferArray"
+
+    - name: "product_offer_version"
+      source_col_name: "appliedOfferArray__productOfferVersion"
+      type: "bigint"
+      description: "Product offer version from appliedOfferArray"
+
+    - name: "product_offer_is_tax_included"
+      source_col_name: "appliedOfferArray__productOfferIsTaxIncluded"
+      type: "boolean"
+      description: "Whether tax is included in the product offer"
+
+    - name: "usage_quantity"
+      source_col_name: "appliedOfferArray__usageQuantity"
+      type: "double"
+      description: "Usage quantity from appliedOfferArray"
+
+    - name: "usage_quantity_unit"
+      source_col_name: "appliedOfferArray__usageQuantityUnit"
+      type: "bigint"
+      description: "Usage quantity unit from appliedOfferArray"
+
+    - name: "applied_bundle_index"
+      source_col_name: "appliedOfferArray__appliedBundleIndex"
+      type: "bigint"
+      description: "Cross-reference index to appliedBundleArray"

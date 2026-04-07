@@ -1,0 +1,116 @@
+version: 1.0
+table:
+  name: "usage_applied_bundle_cleaned"
+  description: "Flattened view of usage event appliedBundleArray fields"
+  tags:
+    owner__tech: "Revenue Assurance Team"
+    data__supplier: "MATRIX"
+    data__domain: "TBD"
+    pii__exists: "false"
+    pii__classification: "TBD"
+
+  primary_keys:
+    - "event_id"
+    - "bundle_id"
+    - "applied_catalog_item_index"
+    - "applied_bundle_array_index"
+  deduplication_keys:
+    - "event_datetime_utc"
+
+  flatten_config:
+    cols_to_explode:
+      - "appliedBundleArray"
+    cols_to_exclude:
+      - "_metadata"
+    explode_with_index_col: true
+
+  columns:
+    - name: "event_type"
+      source_col_name: "mtx_container_name"
+      type: "string"
+      description: "Type of an Event Data Record (EDR)"
+
+    - name: "event_id"
+      source_col_name: "eventId"
+      type: "string"
+      description: "Key event identifier used for deduplication"
+
+    - name: "event_datetime_utc"
+      source_col_name: "eventTime"
+      type: "timestamp"
+      description: "Event time (UTC)"
+
+    - name: "applied_bundle_array_index"
+      source_col_name: "appliedBundleArray__index"
+      type: "bigint"
+      description: "Array position for elements in appliedBundleArray"
+
+    - name: "bundle_id"
+      source_col_name: "appliedBundleArray__bundleId"
+      type: "bigint"
+      description: "Bundle identifier from appliedBundleArray"
+
+    - name: "bundle_external_id"
+      source_col_name: "appliedBundleArray__bundleExternalId"
+      type: "string"
+      description: "External bundle identifier from appliedBundleArray"
+
+    - name: "bundle_resource_id"
+      source_col_name: "appliedBundleArray__bundleResourceId"
+      type: "bigint"
+      description: "Bundle resource identifier from appliedBundleArray"
+
+    - name: "bundle_version"
+      source_col_name: "appliedBundleArray__bundleVersion"
+      type: "bigint"
+      description: "Bundle version from appliedBundleArray"
+
+    - name: "applied_catalog_item_index"
+      source_col_name: "appliedBundleArray__appliedCatalogItemIndex"
+      type: "bigint"
+      description: "Cross-reference index to appliedCatalogItemArray"
+
+    - name: "purchased_bundle_attr_ci_type"
+      source_col_name: "appliedBundleArray__purchasedBundleAttr__ciType"
+      type: "string"
+      description: "ciType from purchasedBundleAttr"
+
+    - name: "purchased_bundle_attr_com_code"
+      source_col_name: "appliedBundleArray__purchasedBundleAttr__comCode"
+      type: "string"
+      description: "comCode from purchasedBundleAttr"
+
+    - name: "purchased_bundle_attr_prop_type"
+      source_col_name: "appliedBundleArray__purchasedBundleAttr__propType"
+      type: "string"
+      description: "propType from purchasedBundleAttr"
+
+    - name: "purchased_bundle_attr_data_grant"
+      source_col_name: "appliedBundleArray__purchasedBundleAttr__dataGrant"
+      type: "double"
+      description: "dataGrant from purchasedBundleAttr"
+
+    - name: "purchased_bundle_attr_voice_grant"
+      source_col_name: "appliedBundleArray__purchasedBundleAttr__voiceGrant"
+      type: "double"
+      description: "voiceGrant from purchasedBundleAttr"
+
+    - name: "purchased_bundle_attr_text_grant"
+      source_col_name: "appliedBundleArray__purchasedBundleAttr__textGrant"
+      type: "double"
+      description: "textGrant from purchasedBundleAttr"
+
+    - name: "purchased_bundle_attr_total_charge"
+      source_col_name: "appliedBundleArray__purchasedBundleAttr__totalCharge"
+      type: "double"
+      description: "totalCharge from purchasedBundleAttr"
+
+    - name: "purchased_bundle_attr_discounted_total_charge"
+      source_col_name: "appliedBundleArray__purchasedBundleAttr__discountedTotalCharge"
+      type: "double"
+      description: "discountedTotalCharge from purchasedBundleAttr"
+
+    - name: "purchased_bundle_attr_num_discounted_cycles"
+      source_col_name: "appliedBundleArray__purchasedBundleAttr__numDiscountedCycles"
+      type: "bigint"
+      description: "numDiscountedCycles from purchasedBundleAttr"

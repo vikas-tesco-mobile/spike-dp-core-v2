@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://www.schemastore.org/databricks-asset-bundles.json
+#
+# NOTE: In this approach (v2), dbt code lives in a separate repo (spike-dp-analysts-v2).
+# The dbt_task uses git_source to pull the dbt project at runtime from that repo.
+#
+resources:
+  jobs:
+    revenue_assurance_dbt:
+      name: revenue_assurance_dbt
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "4"
+            dependencies:
+              - "dbt-databricks>=1.11.2"
+      webhook_notifications:
+        on_failure:
+          - id: ${var.datahub_alert_slack_id}
+      trigger:
+        table_update:
+          condition: ALL_UPDATED
+          table_names:
+            - "${var.catalog}.vmo2_revenue_assurance_silver.usage_root_cleaned"
+            - "${var.catalog}.vmo2_revenue_assurance_silver.usage_charge_cleaned"
+            - "${var.catalog}.vmo2_revenue_assurance_silver.usage_applied_offer_cleaned"
+            - "${var.catalog}.vmo2_revenue_assurance_silver.usage_applied_bundle_cleaned"
+            - "${var.catalog}.vmo2_revenue_assurance_silver.usage_applied_catalog_item_cleaned"
+            - "${var.catalog}.vmo2_revenue_assurance_silver.usage_applied_tax_cleaned"
+            - "${var.catalog}.vmo2_revenue_assurance_silver.usage_balance_update_cleaned"
+            - "${var.catalog}.vmo2_revenue_assurance_silver.usage_quantity_cleaned"
+      git_source:
+        git_url: ${var.dbt_git_url}
+        git_branch: ${var.dbt_git_branch}
+        git_provider: gitHub
+      tasks:
+        - task_key: load_revenue_assurance_dbt
+          environment_key: default
+          dbt_task:
+            project_directory: dbt_project
+            commands:
+              - "dbt deps"
+              - "dbt build -s +datahub.revenue_assurance_gold --target ${var.profile} --vars '{\"catalog\": \"${var.catalog}\"}'"

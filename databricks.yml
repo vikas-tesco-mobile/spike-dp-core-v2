@@ -1,0 +1,128 @@
+bundle:
+  name: dp-core-v2
+
+artifacts:
+  dp_lib:
+    type: whl
+    build: poetry build
+
+include:
+  - workflows/*.yml
+  - workflows/*/*.yml
+
+sync:
+  include:
+    - configs/
+
+variables:
+  profile:
+    description: "The deployment profile (dev, int, local, prod)"
+  config_path:
+    description: "Path to configuration files"
+  catalog:
+    description: "Unity Catalog name"
+  datahub_alert_slack_id:
+    description: "The notification destination id for datahub alerts"
+  dbt_git_url:
+    description: "Git URL of the dp-analysts dbt repository"
+  dbt_git_branch:
+    description: "Git branch of the dp-analysts dbt repository to use"
+
+targets:
+  local:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405612648424970.10.azuredatabricks.net
+      root_path: /Workspace/Users/${workspace.current_user.userName}/local-bundle/${bundle.name}
+      file_path: ${workspace.root_path}/files
+    permissions:
+        - group_name: users
+          level: CAN_VIEW
+    variables:
+      profile: local
+      config_path: ${workspace.file_path}/configs
+      catalog: eun_dev_906_dh_data_db
+      datahub_alert_slack_id: e62912a4-3e1b-42a4-9eb7-f048ecbd7d93
+      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
+      dbt_git_branch: main
+  dev:
+    mode: development
+    workspace:
+      host: https://adb-7405612648424970.10.azuredatabricks.net
+      root_path: /Workspace/Users/${workspace.current_user.userName}/dev-bundle/${bundle.name}
+      file_path: ${workspace.root_path}/files
+    permissions:
+        - group_name: users
+          level: CAN_VIEW
+        - group_name: Databricks-AZ-906-DEV-APP-1-DBW-Datahub-DataEngineers
+          level: CAN_MANAGE
+        - group_name: eun-dev-906-dh-catalog-owners
+          level: CAN_MANAGE
+    variables:
+      profile: dev
+      config_path: ${workspace.file_path}/configs
+      catalog: eun_dev_906_dh_data_db
+      datahub_alert_slack_id: e62912a4-3e1b-42a4-9eb7-f048ecbd7d93
+      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
+      dbt_git_branch: main
+  int:
+    mode: development
+    workspace:
+      host: https://adb-7405615222768992.12.azuredatabricks.net
+      root_path: /Workspace/Users/${workspace.current_user.userName}/int-bundle/${bundle.name}
+      file_path: ${workspace.root_path}/files
+    permissions:
+        - group_name: users
+          level: CAN_VIEW
+        - group_name: Databricks-AZ-906-DEV-APP-1-DBW-Datahub-DataEngineers
+          level: CAN_MANAGE
+        - group_name: eun-int-906-dh-catalog-owners
+          level: CAN_MANAGE
+    variables:
+      profile: int
+      config_path: ${workspace.file_path}/configs
+      catalog: eun_int_906_dh_data_db
+      datahub_alert_slack_id: cc925411-cc20-4f05-bd7c-790c4af9db9c
+      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
+      dbt_git_branch: main
+  ppe:
+    mode: development
+    workspace:
+      host: https://adb-7405605425276996.16.azuredatabricks.net
+      root_path: /Workspace/Users/${workspace.current_user.userName}/ppe-bundle/${bundle.name}
+      file_path: ${workspace.root_path}/files
+    permissions:
+        - group_name: users
+          level: CAN_VIEW
+        - group_name: Databricks-AZ-906-PROD-APP-1-DBW-Datahub-DataEngineers
+          level: CAN_MANAGE
+        - group_name: eun-ppe-906-dh-catalog-owners
+          level: CAN_MANAGE
+    variables:
+      profile: ppe
+      config_path: ${workspace.file_path}/configs
+      catalog: eun_ppe_906_dh_data_db
+      datahub_alert_slack_id: d534039f-9695-4857-a4ac-1243329a6b03
+      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
+      dbt_git_branch: main
+  prod:
+    mode: development
+    workspace:
+      host: https://adb-7405616830679174.14.azuredatabricks.net
+      root_path: /Workspace/Users/${workspace.current_user.userName}/prod-bundle/${bundle.name}
+      file_path: ${workspace.root_path}/files
+    permissions:
+        - group_name: users
+          level: CAN_VIEW
+        - group_name: Databricks-AZ-906-PROD-APP-1-DBW-Datahub-DataEngineers
+          level: CAN_MANAGE
+        - group_name: eun-prod-906-dh-catalog-owners
+          level: CAN_MANAGE
+    variables:
+      profile: prod
+      config_path: ${workspace.file_path}/configs
+      catalog: eun_prod_906_dh_data_db
+      datahub_alert_slack_id: ab417b62-e3a7-4b90-9d89-15c9e836ac8e
+      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
+      dbt_git_branch: main

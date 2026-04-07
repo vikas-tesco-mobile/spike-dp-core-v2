@@ -1,0 +1,26 @@
+resources:
+  jobs:
+    blugem_ccs_usage_reconciliation_exporter_csv:
+      name: blugem_ccs_usage_reconciliation_exporter
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: 4
+            dependencies:
+              - ../../dist/*.whl
+      webhook_notifications:
+        on_failure:
+          - id: ${var.datahub_alert_slack_id}
+      tasks:
+        - task_key: export_csv
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/exporter/data_exporter.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "blugem_ccs_usage_reconciliation_exporter",
+            ]

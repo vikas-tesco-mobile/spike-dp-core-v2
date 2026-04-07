@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://www.schemastore.org/databricks-asset-bundles.json
+resources:
+  jobs:
+    tap_sales_daily:
+      name: tesco_tap_store_online_sales
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: 4
+            dependencies:
+              - ../../dist/*.whl
+
+      tasks:
+        - task_key: load_store_sales_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "tesco_tap_sales",
+              "--task_name",
+              "load_store_sales_bronze_table"
+            ]
+        - task_key: load_store_sales_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_store_sales_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "tesco_tap_sales",
+              "--task_name",
+              "load_store_sales_silver_table"
+            ]
+
+        - task_key: load_online_sales_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "tesco_tap_sales",
+              "--task_name",
+              "load_online_sales_bronze_table"
+            ]
+        - task_key: load_online_sales_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_online_sales_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "tesco_tap_sales",
+              "--task_name",
+              "load_online_sales_silver_table"
+            ]

@@ -1,0 +1,73 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main, develop]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [dbt-updated]
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  deploy_dev:
+    name: Deploy to Dev
+    if: >
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'repository_dispatch')
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.3'
+
+      - name: Install Poetry 2.2.1
+        env:
+          POETRY_VERSION: 2.2.1
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 - --version $POETRY_VERSION
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.create true
+          poetry --version
+
+      - name: Install dependencies
+        run: |
+          poetry install --with dev
+
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | bash
+          databricks --version
+
+      - name: Build artifact (wheel)
+        run: |
+          poetry build -f wheel
+
+      - name: Verify wheel was created
+        run: |
+          ls -la dist/
+          ls -la dist/*.whl || echo "No wheel files found"
+
+      - name: Deploy to Dev
+        shell: bash
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+        run: |
+          echo "Deploying to dev environment..."
+          echo "Trigger: ${{ github.event_name }}"
+          databricks bundle validate --target dev
+          databricks bundle deploy --target dev

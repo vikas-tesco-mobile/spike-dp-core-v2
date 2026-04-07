@@ -1,0 +1,68 @@
+version: 1.0
+table:
+  name: "usage_usage_quantity_cleaned"
+  description: "Flattened view of usage event usageQuantityList fields"
+  tags:
+    owner__tech: "Revenue Assurance Team"
+    data__supplier: "MATRIX"
+    data__domain: "TBD"
+    pii__exists: "false"
+    pii__classification: "TBD"
+
+  primary_keys:
+    - "event_id"
+  deduplication_keys:
+    - "event_datetime_utc"
+
+  flatten_config:
+    cols_to_explode:
+      - "usageQuantityList"
+    cols_to_exclude:
+      - "_metadata"
+    explode_with_index_col: true
+
+  columns:
+    - name: "event_type"
+      source_col_name: "mtx_container_name"
+      type: "string"
+      description: "Type of an Event Data Record (EDR)"
+
+    - name: "event_id"
+      source_col_name: "eventId"
+      type: "string"
+      description: "Key event identifier used for deduplication"
+
+    - name: "event_datetime_utc"
+      source_col_name: "eventTime"
+      type: "timestamp"
+      description: "Event time (UTC)"
+
+    - name: "usage_quantity_list_index"
+      source_col_name: "usageQuantityList__index"
+      type: "bigint"
+      description: "Array position for elements in usageQuantityList"
+
+    - name: "quantity_type"
+      source_col_name: "usageQuantityList__quantityType"
+      type: "string"
+      description: "Quantity type from usageQuantityList"
+
+    - name: "quantity_unit"
+      source_col_name: "usageQuantityList__quantityUnit"
+      type: "string"
+      description: "Quantity unit from usageQuantityList"
+
+    - name: "usage_rating_amount"
+      source_col_name: "usageQuantityList__ratingAmount"
+      type: "double"
+      description: "Rating amount from usageQuantityList"
+
+    - name: "usage_msg_amount"
+      source_col_name: "usageQuantityList__msgAmount"
+      type: "double"
+      description: "Message amount from usageQuantityList"
+
+    - name: "flags"
+      source_col_name: "usageQuantityList__flags"
+      type: "bigint"
+      description: "Flags from usageQuantityList"

@@ -1,0 +1,164 @@
+resources:
+  jobs:
+    vmo2_mft_usage_daily:
+      name: "vmo2_mft_usage_daily"
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "4"
+            dependencies:
+              - ../../dist/*.whl
+      webhook_notifications:
+        on_failure:
+          - id: ${var.datahub_alert_slack_id}
+      tasks:
+        - task_key: load_bronze_table
+          environment_key: default
+          spark_python_task:
+            python_file: ../../src/dp_core/loader/file_based_autoloader.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "vmo2_mft_usage_daily",
+              "--task_name",
+              "load_bronze_table"
+            ]
+
+        - task_key: load_usage_root_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "vmo2_mft_usage_daily",
+              "--task_name",
+              "load_usage_root_silver_table"
+            ]
+
+        - task_key: load_usage_charge_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "vmo2_mft_usage_daily",
+              "--task_name",
+              "load_usage_charge_silver_table"
+            ]
+
+        - task_key: load_usage_applied_offer_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "vmo2_mft_usage_daily",
+              "--task_name",
+              "load_usage_applied_offer_silver_table"
+            ]
+
+        - task_key: load_usage_applied_bundle_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "vmo2_mft_usage_daily",
+              "--task_name",
+              "load_usage_applied_bundle_silver_table"
+            ]
+
+        - task_key: load_usage_applied_catalog_item_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "vmo2_mft_usage_daily",
+              "--task_name",
+              "load_usage_applied_catalog_item_silver_table"
+            ]
+
+        - task_key: load_usage_applied_tax_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "vmo2_mft_usage_daily",
+              "--task_name",
+              "load_usage_applied_tax_silver_table"
+            ]
+
+        - task_key: load_usage_balance_update_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "vmo2_mft_usage_daily",
+              "--task_name",
+              "load_usage_balance_update_silver_table"
+            ]
+
+        - task_key: load_usage_quantity_silver_table
+          environment_key: default
+          depends_on:
+            - task_key: load_bronze_table
+          spark_python_task:
+            python_file: ../../src/dp_core/transformer/silver_data_processor.py
+            parameters: [
+              "--profile",
+              "${var.profile}",
+              "--config_path",
+              "${var.config_path}",
+              "--job_name",
+              "vmo2_mft_usage_daily",
+              "--task_name",
+              "load_usage_quantity_silver_table"
+            ]
