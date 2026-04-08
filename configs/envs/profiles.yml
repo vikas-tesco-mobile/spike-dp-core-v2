@@ -1,0 +1,15 @@
+datahub: 
+  target: dev  # Default active environment
+  outputs:
+    dev:
+      env: "dev"
+      catalog: "eun_dev_906_dh_data_db"
+    int:
+      env: "int"
+      catalog: "eun_int_906_dh_data_db"
+    ppe:
+      env: "ppe"
+      catalog: "eun_ppe_906_dh_data_db"
+    prod:
+      env: "prod"
+      catalog: "eun_prod_906_dh_data_db"
