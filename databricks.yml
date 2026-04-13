@@ -13,7 +13,6 @@ include:
 sync:
   include:
     - configs/
-    - dbt_project/
 
 variables:
   profile:
@@ -24,6 +23,8 @@ variables:
     description: "Unity Catalog name"
   datahub_alert_slack_id:
     description: "The notification destination id for datahub alerts"
+  dbt_workspace_project_path:
+    description: "Absolute workspace path to the uploaded dbt project"
 targets:
   local:
     mode: development
@@ -40,6 +41,7 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_dev_906_dh_data_db
       datahub_alert_slack_id: e62912a4-3e1b-42a4-9eb7-f048ecbd7d93
+      dbt_workspace_project_path: /Workspace/Shared/dbt-projects/spike-dp-analysts-v2/dbt_project
   dev:
     mode: development
     workspace:
@@ -58,6 +60,7 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_dev_906_dh_data_db
       datahub_alert_slack_id: e62912a4-3e1b-42a4-9eb7-f048ecbd7d93
+      dbt_workspace_project_path: /Workspace/Shared/dbt-projects/spike-dp-analysts-v2/dbt_project
   int:
     mode: development
     workspace:
@@ -76,6 +79,7 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_int_906_dh_data_db
       datahub_alert_slack_id: cc925411-cc20-4f05-bd7c-790c4af9db9c
+      dbt_workspace_project_path: /Workspace/Shared/dbt-projects/spike-dp-analysts-v2/dbt_project
   ppe:
     mode: development
     workspace:
@@ -94,6 +98,7 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_ppe_906_dh_data_db
       datahub_alert_slack_id: d534039f-9695-4857-a4ac-1243329a6b03
+      dbt_workspace_project_path: /Workspace/Shared/dbt-projects/spike-dp-analysts-v2/dbt_project
   prod:
     mode: development
     workspace:
@@ -112,3 +117,4 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_prod_906_dh_data_db
       datahub_alert_slack_id: ab417b62-e3a7-4b90-9d89-15c9e836ac8e
+      dbt_workspace_project_path: /Workspace/Shared/dbt-projects/spike-dp-analysts-v2/dbt_project

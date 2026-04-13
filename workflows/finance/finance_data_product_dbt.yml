@@ -27,7 +27,7 @@ resources:
           environment_key: default
           dbt_task:
             source: WORKSPACE
-            project_directory: ${workspace.file_path}/dbt_project
+            project_directory: ${var.dbt_workspace_project_path}
             commands:
               - "dbt deps"
               - "dbt build -s +datahub.finance_gold --target ${var.profile} --vars '{\"catalog\": \"${var.catalog}\"}'"
