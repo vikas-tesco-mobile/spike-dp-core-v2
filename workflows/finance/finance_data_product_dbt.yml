@@ -1,11 +1,7 @@
 # yaml-language-server: $schema=https://www.schemastore.org/databricks-asset-bundles.json
 #
-# NOTE: In this approach (v2), dbt code lives in a separate repo (spike-dp-analysts-v2).
-# The dbt_task uses git_source to pull the dbt project at runtime from that repo.
-# This means:
-#   - Analysts push dbt changes to spike-dp-analysts-v2
-#   - Core team controls workflow definitions, triggers, and schedules
-#   - The dbt_git_branch variable determines which branch of dbt code is used
+# NOTE: In this tactical v2 variant, analysts CI stages dbt_project/ into the
+# core bundle before deployment, so the dbt task runs from workspace files.
 #
 resources:
   jobs:
@@ -26,15 +22,12 @@ resources:
           table_names:
             - "${var.catalog}.tesco_finance_silver.tesco_locations_cleaned"
             - "${var.catalog}.tesco_finance_silver.tesco_products_cleaned"
-      git_source:
-        git_url: ${var.dbt_git_url}
-        git_branch: ${var.dbt_git_branch}
-        git_provider: gitHub
       tasks:
         - task_key: load_tesco_sales_transactions
           environment_key: default
           dbt_task:
-            project_directory: dbt_project
+            source: WORKSPACE
+            project_directory: ${workspace.file_path}/dbt_project
             commands:
               - "dbt deps"
               - "dbt build -s +datahub.finance_gold --target ${var.profile} --vars '{\"catalog\": \"${var.catalog}\"}'"

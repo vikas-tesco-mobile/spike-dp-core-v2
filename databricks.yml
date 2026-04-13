@@ -13,6 +13,7 @@ include:
 sync:
   include:
     - configs/
+    - dbt_project/
 
 variables:
   profile:
@@ -23,11 +24,6 @@ variables:
     description: "Unity Catalog name"
   datahub_alert_slack_id:
     description: "The notification destination id for datahub alerts"
-  dbt_git_url:
-    description: "Git URL of the dp-analysts dbt repository"
-  dbt_git_branch:
-    description: "Git branch of the dp-analysts dbt repository to use"
-
 targets:
   local:
     mode: development
@@ -44,8 +40,6 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_dev_906_dh_data_db
       datahub_alert_slack_id: e62912a4-3e1b-42a4-9eb7-f048ecbd7d93
-      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
-      dbt_git_branch: main
   dev:
     mode: development
     workspace:
@@ -64,8 +58,6 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_dev_906_dh_data_db
       datahub_alert_slack_id: e62912a4-3e1b-42a4-9eb7-f048ecbd7d93
-      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
-      dbt_git_branch: main
   int:
     mode: development
     workspace:
@@ -84,8 +76,6 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_int_906_dh_data_db
       datahub_alert_slack_id: cc925411-cc20-4f05-bd7c-790c4af9db9c
-      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
-      dbt_git_branch: main
   ppe:
     mode: development
     workspace:
@@ -104,8 +94,6 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_ppe_906_dh_data_db
       datahub_alert_slack_id: d534039f-9695-4857-a4ac-1243329a6b03
-      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
-      dbt_git_branch: main
   prod:
     mode: development
     workspace:
@@ -124,5 +112,3 @@ targets:
       config_path: ${workspace.file_path}/configs
       catalog: eun_prod_906_dh_data_db
       datahub_alert_slack_id: ab417b62-e3a7-4b90-9d89-15c9e836ac8e
-      dbt_git_url: https://github.com/vikas-tesco-mobile/spike-dp-analysts-v2.git
-      dbt_git_branch: main
