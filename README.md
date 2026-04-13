@@ -2,7 +2,7 @@
 
 ## Approach
 
-This repo is the single deployment authority -- it owns ALL workflows (bronze, silver, AND dbt), the Spark source code, configs, and the only Databricks Asset Bundle. It references the analysts' dbt code at runtime using Databricks `git_source` (pulling from the analysts repo's main branch). The analysts repo is a pure dbt code repo with no bundle and no CD. When analysts merge dbt changes to main, their CI triggers this repo's CD via `repository_dispatch`, which redeploys all workflows picking up the latest dbt code.
+This repo is the single deployment authority -- it owns ALL workflows (bronze, silver, AND dbt), the Spark source code, configs, and the only Databricks Asset Bundle. In this tactical v2 variant, the analysts repo remains the source of truth for dbt code, but its `dbt_project/` is staged into this repo's bundle before deployment. The analysts repo has no bundle and no CD of its own. When analysts merge dbt changes to main, their CI triggers this repo's CD via `repository_dispatch`, which rebuilds and redeploys all workflows with the latest staged dbt code.
 
 ## What This Repo Contains
 
@@ -11,9 +11,10 @@ This repo is the single deployment authority -- it owns ALL workflows (bronze, s
 | `src/dp_core/` | Spark Python code -- extractors, loaders, transformers, exporters, housekeeping, utilities |
 | `configs/envs/` | Jinja2 config template (`config.yml.j2`) and `.env.template` |
 | `configs/schemas/` | Silver layer schema definitions (12 YAML files) |
+| `dbt_project/` | Staged dbt project copied from analysts repo for deployment and validation |
 | `workflows/` | **12 Databricks workflow YAMLs** (ALL workflows including dbt) |
 | `tests/` | Python unit tests (pytest) |
-| `databricks.yml` | Databricks Asset Bundle config (bundle name: `dp-core-v2`) with `dbt_git_url` and `dbt_git_branch` variables |
+| `databricks.yml` | Databricks Asset Bundle config (bundle name: `dp-core-v2`) that syncs configs and `dbt_project/` into workspace files |
 | `pyproject.toml` | Python project config (package name: `dp-core`, internal: `dp_core`) |
 
 ## Workflows Owned
@@ -24,30 +25,28 @@ This repo is the single deployment authority -- it owns ALL workflows (bronze, s
 - `tesco_quote_stream_daily` -- bronze only
 - `tesco_tap_store_online_sales` -- bronze -> silver (store + online)
 - `sale_transactions_exporter` -- gold -> CSV export
-- `tesco_sales_transactions` -- **dbt job** (uses `git_source` to pull dbt code from analysts repo)
+- `tesco_sales_transactions` -- **dbt job** (runs staged `dbt_project/` from workspace files)
 
 ### CCS / Revenue Assurance
 - `vmo2_mft_usage_daily` -- bronze -> 8 silver tables
 - `offer_manager_daily` -- 3 bronze tables
 - `hansen_daily` -- 5 bronze tables
 - `blugem_ccs_usage_reconciliation_exporter` -- gold -> CSV export
-- `revenue_assurance_dbt` -- **dbt job** (uses `git_source` to pull dbt code from analysts repo)
+- `revenue_assurance_dbt` -- **dbt job** (runs staged `dbt_project/` from workspace files)
 
 ### Housekeeping
 - `table_metadata_updater` -- metadata tags and descriptions
 
-## How dbt Workflows Reference Analysts Repo
+## How dbt Workflows Use Analysts dbt Code
 
-dbt workflows use Databricks `git_source` to pull dbt code at runtime:
+In this tactical v2 variant, analysts CI stages `dbt_project/` into this repo before deployment, and
+Databricks dbt tasks run from workspace files:
 
 ```yaml
-git_source:
-  git_url: ${var.dbt_git_url}
-  git_branch: ${var.dbt_git_branch}
-  git_provider: gitHub
 tasks:
   - dbt_task:
-      project_directory: dbt_project   # relative to analysts repo root
+      source: WORKSPACE
+      project_directory: ${workspace.file_path}/dbt_project
 ```
 
 ## CI/CD
@@ -72,8 +71,8 @@ trigger-core-deploy job --> repository_dispatch "dbt-updated"
 This repo's CD receives event
         |
         v
-Build wheel --> databricks bundle deploy
-(dbt workflows use git_source --> picks up latest main from analysts)
+Stage analysts dbt_project/ --> build wheel --> databricks bundle deploy
+(dbt workflows run from staged workspace files)
 ```
 
 **Required secret in analysts repo:** `CORE_REPO_DISPATCH_TOKEN` (PAT with `repo` scope for this repo)
@@ -84,6 +83,7 @@ Build wheel --> databricks bundle deploy
 poetry install --with dev
 cp configs/envs/.env.template configs/envs/.env
 # Edit .env with your DEVELOPER_PREFIX
+# Ensure dbt_project/ is present before bundle validation or deployment
 databricks bundle deploy --target local
 ```
 
@@ -95,9 +95,10 @@ spike-dp-core-v2                       spike-dp-analysts-v2
  ALL workflows                          dbt models only (no bundle)
  Spark code + wheel                     CI: lint + dbt unit tests
  configs + schemas                      On merge to main:
- databricks.yml (only bundle)             triggers this repo's CD
+ dbt_project staged here                  triggers this repo's CD
+ databricks.yml (only bundle)             via repository_dispatch
          |                                via repository_dispatch
          v
- dbt workflows use git_source
- to pull dbt code from analysts
+ dbt workflows run staged
+ dbt_project from workspace
 ```
